@@ -101,14 +101,14 @@ float Radians_To_Degrees(float Rad)
 	return Rad * 180.0f / PI;
 }
 
-float ImplicitLineEquation(VEC_3D _a, VEC_3D _b, VEC_3D _p)
+float ImplicitLineEquation(VEC_4D _a, VEC_4D _b, VEC_4D _p)
 {
 	//(y1-y2)px + (x2-x1) + x1y2 - y1x2
 
 	return (_a.y - _b.y) * _p.x + (_b.x - _a.x) * _p.y + ((_a.x * _b.y) - (_a.y * _b.x));
 }
 
-VEC_3D ComputeBarycentric(VEC_3D _a, VEC_3D _b, VEC_3D _c, VEC_3D _p)
+VEC_3D ComputeBarycentric(VEC_4D _a, VEC_4D _b, VEC_4D _c, VEC_4D _p)
 {
 	float maxA = ImplicitLineEquation(_b, _c, _a);
 	float maxB = ImplicitLineEquation(_c, _a, _b);
@@ -135,7 +135,7 @@ VEC_3D ComputeBarycentric(VEC_3D _a, VEC_3D _b, VEC_3D _c, VEC_3D _p)
 //	return { (subA / maxA), (subB / maxB), (subC / maxC) };
 //}
 
-unsigned int ColorBlend(VERTEX_3D a, VERTEX_3D b, float ratio)
+unsigned int ColorBlend(VERTEX_4D a, VERTEX_4D b, float ratio)
 {
 	int aA = (a._color & 0xFF000000) >> 24;
 	int aR = (a._color & 0x00FF0000) >> 16;
@@ -325,6 +325,69 @@ MATRIX_4D Matrix_to_Matrix_Multiply_4D(MATRIX_4D _m, MATRIX_4D _n)
 	return temp;
 }
 
+
+MATRIX_3D Matrix_Transpose_3D(MATRIX_3D _m)
+{
+	MATRIX_3D temp = _m;
+
+	_m.e11 = temp.e11;
+	_m.e12 = temp.e21;
+	_m.e13 = temp.e31;
+
+	_m.e21 = temp.e12;
+	_m.e22 = temp.e22;
+	_m.e23 = temp.e32;
+
+	_m.e31 = temp.e13;
+	_m.e32 = temp.e23;
+	_m.e33 = temp.e33;
+
+	return _m;
+}
+
+VEC_3D Vertex_Negate_3D(VEC_3D _v)
+{
+	_v.x *= -1;
+	_v.y *= -1;
+	_v.z *= -1;
+
+	return _v;
+}
+
+MATRIX_4D Fast_Inverse(MATRIX_4D _m)
+{
+	MATRIX_3D temp = { _m.e11, _m.e12, _m.e13, _m.e21, _m.e22, _m.e23, _m.e31, _m.e32, _m.e33 };
+
+	temp = Matrix_Transpose_3D(temp);
+
+	VERTEX_3D v_temp = { _m.e41, _m.e42, _m.e43 };
+	v_temp = Vertex_Matrix_Multipication_3D(v_temp, temp);
+
+	v_temp.pos = Vertex_Negate_3D(v_temp.pos);
+
+	_m.e11 = temp.e11;
+	_m.e12 = temp.e12;
+	_m.e13 = temp.e13;
+	_m.e14 = 0;
+
+	_m.e21 = temp.e21;
+	_m.e22 = temp.e22;
+	_m.e23 = temp.e23;
+	_m.e24 = 0;
+
+	_m.e31 = temp.e31;
+	_m.e32 = temp.e32;
+	_m.e33 = temp.e33;
+	_m.e34 = 0;
+
+	_m.e41 = v_temp.pos.x;
+	_m.e42 = v_temp.pos.y;
+	_m.e43 = v_temp.pos.z;
+	_m.e44 = 1;
+
+	return _m;
+}
+
 float Determinant_4D(MATRIX_4D _m)
 {
 	float determinant = 0.0f;
@@ -347,6 +410,12 @@ MATRIX_4D Inverse_Matrix_4D(MATRIX_4D _m)
 	{
 		return _m;
 	}
+
+							//Matrix4X4			    Matrix4X4					Matrix4X4
+						//[ A, B, C, D			[ a, b, c, d				[ (Aa + Be + Ci + Dm) , (Ab + Bf + Cj + Dn) , (Ac + Bg + Ck + Do) , (Ad + Bh + Cl + Dp)
+						//  E, F, G, H		 *    e, f,	g, h		=		  (Ea + Fe + Gi + Hm) , (Eb + Ff + Gj + Hn) , (Ec + Fg + Gk + Ho) , (Ed + Fh + Gl + Hp)
+						//  I, J, K, L  	      i, j, k, l  			      (Ia + Je + Ki + Lm) , (Ib + Jf + Kj + Ln) , (Ic + Jg + Kk + Lo) , (Id + Jh + Kl + Lp)
+						//  M, N, O, P ]		  m, n, o, p ]                (Ma + Ne + Oi + Pm) , (Mb + Nf + Oj + Pn) , (Mc + Ng + Ok + Po) , (Md + Nh + Ol + Pp) ]
 
 	_m.mat[0][0] = (_m.mat[1][2] * _m.mat[2][3] * _m.mat[3][1]) - (_m.mat[1][3] * _m.mat[2][2] * _m.mat[3][1]) + (_m.mat[1][3] * _m.mat[2][1] * _m.mat[3][2]) - (_m.mat[1][1] * _m.mat[2][3] * _m.mat[3][2]) - (_m.mat[1][2] * _m.mat[2][1] * _m.mat[3][3]) + (_m.mat[1][1] * _m.mat[2][2] * _m.mat[3][3]);
 	_m.mat[0][1] = (_m.mat[0][3] * _m.mat[2][2] * _m.mat[3][1]) - (_m.mat[0][2] * _m.mat[2][3] * _m.mat[3][1]) - (_m.mat[0][3] * _m.mat[2][1] * _m.mat[3][2]) + (_m.mat[0][1] * _m.mat[2][3] * _m.mat[3][2]) + (_m.mat[0][2] * _m.mat[2][1] * _m.mat[3][3]) - (_m.mat[0][1] * _m.mat[2][2] * _m.mat[3][3]);

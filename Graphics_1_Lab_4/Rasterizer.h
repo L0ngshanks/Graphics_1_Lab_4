@@ -32,7 +32,7 @@ void PlotPixel(VERTEX_2D _p)
 }
 
 
-void Parametric(VERTEX_3D _a, VERTEX_3D _b)
+void Parametric(VERTEX_4D _a, VERTEX_4D _b)
 {
 #if 0
 	//begin end ratio
@@ -95,24 +95,7 @@ void Parametric(VERTEX_3D _a, VERTEX_3D _b)
 #endif
 }
 
-//void DrawLine(const VERTEX_3D& start, const VERTEX_3D& end)
-//{
-//	VERTEX_3D copy_start = start;
-//	VERTEX_3D copy_end = end;
-//
-//	if (VERTEX_SHADER_3D)
-//	{
-//		VERTEX_SHADER_3D(copy_start);
-//		VERTEX_SHADER_3D(copy_end);
-//	}
-//
-//	VERTEX_3D screen_start = NDC_to_Screen(copy_start);
-//	VERTEX_3D screen_end = NDC_to_Screen(copy_end);
-//
-//	Parametric(screen_start, copy_end);
-//}
-
-void FillTriange(VERTEX_3D _a, VERTEX_3D _b, VERTEX_3D _c)
+void FillTriange(VERTEX_4D _a, VERTEX_4D _b, VERTEX_4D _c)
 {
 #if 0
 	for (int y = 0; y < RASTER_HEIGHT; ++y)
