@@ -400,79 +400,57 @@ MATRIX_4D Fast_Inverse(MATRIX_4D _m)
 	return _m;
 }
 
-float Determinant_4D(MATRIX_4D _m)
-{
-	float determinant = 0.0f;
-
-	determinant = 
-		(_m.mat[0][3] * _m.mat[1][2] * _m.mat[2][1] * _m.mat[3][0]) - (_m.mat[0][2] * _m.mat[1][3] * _m.mat[2][1] * _m.mat[3][0]) - (_m.mat[0][3] * _m.mat[1][1] * _m.mat[2][2] * _m.mat[3][0]) + (_m.mat[0][1] * _m.mat[1][3] * _m.mat[2][2] * _m.mat[3][0]) +
-		(_m.mat[0][2] * _m.mat[1][1] * _m.mat[2][3] * _m.mat[3][0]) - (_m.mat[0][1] * _m.mat[1][2] * _m.mat[2][3] * _m.mat[3][0]) - (_m.mat[0][3] * _m.mat[1][2] * _m.mat[2][0] * _m.mat[3][1]) + (_m.mat[0][2] * _m.mat[1][3] * _m.mat[2][0] * _m.mat[3][1]) +
-		(_m.mat[0][3] * _m.mat[1][0] * _m.mat[2][2] * _m.mat[3][1]) - (_m.mat[0][0] * _m.mat[1][3] * _m.mat[2][2] * _m.mat[3][1]) - (_m.mat[0][2] * _m.mat[1][0] * _m.mat[2][3] * _m.mat[3][1]) + (_m.mat[0][0] * _m.mat[1][2] * _m.mat[2][3] * _m.mat[3][1]) +
-		(_m.mat[0][3] * _m.mat[1][1] * _m.mat[2][0] * _m.mat[3][2]) - (_m.mat[0][1] * _m.mat[1][3] * _m.mat[2][0] * _m.mat[3][2]) - (_m.mat[0][3] * _m.mat[1][0] * _m.mat[2][1] * _m.mat[3][2]) + (_m.mat[0][0] * _m.mat[1][3] * _m.mat[2][1] * _m.mat[3][2]) +
-		(_m.mat[0][1] * _m.mat[1][0] * _m.mat[2][3] * _m.mat[3][2]) - (_m.mat[0][0] * _m.mat[1][1] * _m.mat[2][3] * _m.mat[3][2]) - (_m.mat[0][2] * _m.mat[1][1] * _m.mat[2][0] * _m.mat[3][3]) + (_m.mat[0][1] * _m.mat[1][2] * _m.mat[2][0] * _m.mat[3][3]) +
-		(_m.mat[0][2] * _m.mat[1][0] * _m.mat[2][1] * _m.mat[3][3]) - (_m.mat[0][0] * _m.mat[1][2] * _m.mat[2][1] * _m.mat[3][3]) - (_m.mat[0][1] * _m.mat[1][0] * _m.mat[2][2] * _m.mat[3][3]) + (_m.mat[0][0] * _m.mat[1][1] * _m.mat[2][2] * _m.mat[3][3]);
-																																
-	return determinant;
-}
-
 MATRIX_4D Inverse_Matrix_4D(MATRIX_4D _m)
 {
-	float determinant = Determinant_4D(_m);
-	if (IsZero(determinant))
-	{
+	float s0 = _m.mat[0][0] * _m.mat[1][1] - _m.mat[1][0] * _m.mat[0][1];
+	float s1 = _m.mat[0][0] * _m.mat[1][2] - _m.mat[1][0] * _m.mat[0][2];
+	float s2 = _m.mat[0][0] * _m.mat[1][3] - _m.mat[1][0] * _m.mat[0][3];
+	float s3 = _m.mat[0][1] * _m.mat[1][2] - _m.mat[1][1] * _m.mat[0][2];
+	float s4 = _m.mat[0][1] * _m.mat[1][3] - _m.mat[1][1] * _m.mat[0][3];
+	float s5 = _m.mat[0][2] * _m.mat[1][3] - _m.mat[1][2] * _m.mat[0][3];
+
+	float c5 = _m.mat[2][2] * _m.mat[3][3] - _m.mat[3][2] * _m.mat[2][3];
+	float c4 = _m.mat[2][1] * _m.mat[3][3] - _m.mat[3][1] * _m.mat[2][3];
+	float c3 = _m.mat[2][1] * _m.mat[3][2] - _m.mat[3][1] * _m.mat[2][2];
+	float c2 = _m.mat[2][0] * _m.mat[3][3] - _m.mat[3][0] * _m.mat[2][3];
+	float c1 = _m.mat[2][0] * _m.mat[3][2] - _m.mat[3][0] * _m.mat[2][2];
+	float c0 = _m.mat[2][0] * _m.mat[3][1] - _m.mat[3][0] * _m.mat[2][1];
+
+	// Should check for 0 determinant
+	float invdet = 1.0 / (s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0);
+
+	if (IsZero(invdet))
 		return _m;
-	}
+	MATRIX_4D temp = Matrix_Identity_4D();
 
-							//Matrix4X4			    Matrix4X4					Matrix4X4
-						//[ A, B, C, D			[ a, b, c, d				[ (Aa + Be + Ci + Dm) , (Ab + Bf + Cj + Dn) , (Ac + Bg + Ck + Do) , (Ad + Bh + Cl + Dp)
-						//  E, F, G, H		 *    e, f,	g, h		=		  (Ea + Fe + Gi + Hm) , (Eb + Ff + Gj + Hn) , (Ec + Fg + Gk + Ho) , (Ed + Fh + Gl + Hp)
-						//  I, J, K, L  	      i, j, k, l  			      (Ia + Je + Ki + Lm) , (Ib + Jf + Kj + Ln) , (Ic + Jg + Kk + Lo) , (Id + Jh + Kl + Lp)
-						//  M, N, O, P ]		  m, n, o, p ]                (Ma + Ne + Oi + Pm) , (Mb + Nf + Oj + Pn) , (Mc + Ng + Ok + Po) , (Md + Nh + Ol + Pp) ]
+	temp.mat[0][0] = (_m.mat[1][1] * c5 - _m.mat[1][2] * c4 + _m.mat[1][3] * c3) * invdet;
+	temp.mat[0][1] = (-_m.mat[0][1] * c5 + _m.mat[0][2] * c4 - _m.mat[0][3] * c3) * invdet;
+	temp.mat[0][2] = (_m.mat[3][1] * s5 - _m.mat[3][2] * s4 + _m.mat[3][3] * s3) * invdet;
+	temp.mat[0][3] = (-_m.mat[2][1] * s5 + _m.mat[2][2] * s4 - _m.mat[2][3] * s3) * invdet;
 
-	_m.mat[0][0] = (_m.mat[1][2] * _m.mat[2][3] * _m.mat[3][1]) - (_m.mat[1][3] * _m.mat[2][2] * _m.mat[3][1]) + (_m.mat[1][3] * _m.mat[2][1] * _m.mat[3][2]) - (_m.mat[1][1] * _m.mat[2][3] * _m.mat[3][2]) - (_m.mat[1][2] * _m.mat[2][1] * _m.mat[3][3]) + (_m.mat[1][1] * _m.mat[2][2] * _m.mat[3][3]);
-	_m.mat[0][1] = (_m.mat[0][3] * _m.mat[2][2] * _m.mat[3][1]) - (_m.mat[0][2] * _m.mat[2][3] * _m.mat[3][1]) - (_m.mat[0][3] * _m.mat[2][1] * _m.mat[3][2]) + (_m.mat[0][1] * _m.mat[2][3] * _m.mat[3][2]) + (_m.mat[0][2] * _m.mat[2][1] * _m.mat[3][3]) - (_m.mat[0][1] * _m.mat[2][2] * _m.mat[3][3]);
-	_m.mat[0][2] = (_m.mat[0][2] * _m.mat[1][3] * _m.mat[3][1]) - (_m.mat[0][3] * _m.mat[1][2] * _m.mat[3][1]) + (_m.mat[0][3] * _m.mat[1][1] * _m.mat[3][2]) - (_m.mat[0][1] * _m.mat[1][3] * _m.mat[3][2]) - (_m.mat[0][2] * _m.mat[1][1] * _m.mat[3][3]) + (_m.mat[0][1] * _m.mat[1][2] * _m.mat[3][3]);
-	_m.mat[0][3] = (_m.mat[0][3] * _m.mat[1][2] * _m.mat[2][1]) - (_m.mat[0][2] * _m.mat[1][3] * _m.mat[2][1]) - (_m.mat[0][3] * _m.mat[1][1] * _m.mat[2][2]) + (_m.mat[0][1] * _m.mat[1][3] * _m.mat[2][2]) + (_m.mat[0][2] * _m.mat[1][1] * _m.mat[2][3]) - (_m.mat[0][1] * _m.mat[1][2] * _m.mat[2][3]);
-	_m.mat[1][0] = (_m.mat[1][3] * _m.mat[2][2] * _m.mat[3][0]) - (_m.mat[1][2] * _m.mat[2][3] * _m.mat[3][0]) - (_m.mat[1][3] * _m.mat[2][0] * _m.mat[3][2]) + (_m.mat[1][0] * _m.mat[2][3] * _m.mat[3][2]) + (_m.mat[1][2] * _m.mat[2][0] * _m.mat[3][3]) - (_m.mat[1][0] * _m.mat[2][2] * _m.mat[3][3]);
-	_m.mat[1][1] = (_m.mat[0][2] * _m.mat[2][3] * _m.mat[3][0]) - (_m.mat[0][3] * _m.mat[2][2] * _m.mat[3][0]) + (_m.mat[0][3] * _m.mat[2][0] * _m.mat[3][2]) - (_m.mat[0][0] * _m.mat[2][3] * _m.mat[3][2]) - (_m.mat[0][2] * _m.mat[2][0] * _m.mat[3][3]) + (_m.mat[0][0] * _m.mat[2][2] * _m.mat[3][3]);
-	_m.mat[1][2] = (_m.mat[0][3] * _m.mat[1][2] * _m.mat[3][0]) - (_m.mat[0][2] * _m.mat[1][3] * _m.mat[3][0]) - (_m.mat[0][3] * _m.mat[1][0] * _m.mat[3][2]) + (_m.mat[0][0] * _m.mat[1][3] * _m.mat[3][2]) + (_m.mat[0][2] * _m.mat[1][0] * _m.mat[3][3]) - (_m.mat[0][0] * _m.mat[1][2] * _m.mat[3][3]);
-	_m.mat[1][3] = (_m.mat[0][2] * _m.mat[1][3] * _m.mat[2][0]) - (_m.mat[0][3] * _m.mat[1][2] * _m.mat[2][0]) + (_m.mat[0][3] * _m.mat[1][0] * _m.mat[2][2]) - (_m.mat[0][0] * _m.mat[1][3] * _m.mat[2][2]) - (_m.mat[0][2] * _m.mat[1][0] * _m.mat[2][3]) + (_m.mat[0][0] * _m.mat[1][2] * _m.mat[2][3]);
-	_m.mat[2][0] = (_m.mat[1][1] * _m.mat[2][3] * _m.mat[3][0]) - (_m.mat[1][3] * _m.mat[2][1] * _m.mat[3][0]) + (_m.mat[1][3] * _m.mat[2][0] * _m.mat[3][1]) - (_m.mat[1][0] * _m.mat[2][3] * _m.mat[3][1]) - (_m.mat[1][1] * _m.mat[2][0] * _m.mat[3][3]) + (_m.mat[1][0] * _m.mat[2][1] * _m.mat[3][3]);
-	_m.mat[2][1] = (_m.mat[0][3] * _m.mat[2][1] * _m.mat[3][0]) - (_m.mat[0][1] * _m.mat[2][3] * _m.mat[3][0]) - (_m.mat[0][3] * _m.mat[2][0] * _m.mat[3][1]) + (_m.mat[0][0] * _m.mat[2][3] * _m.mat[3][1]) + (_m.mat[0][1] * _m.mat[2][0] * _m.mat[3][3]) - (_m.mat[0][0] * _m.mat[2][1] * _m.mat[3][3]);
-	_m.mat[2][2] = (_m.mat[0][1] * _m.mat[1][3] * _m.mat[3][0]) - (_m.mat[0][3] * _m.mat[1][1] * _m.mat[3][0]) + (_m.mat[0][3] * _m.mat[1][0] * _m.mat[3][1]) - (_m.mat[0][0] * _m.mat[1][3] * _m.mat[3][1]) - (_m.mat[0][1] * _m.mat[1][0] * _m.mat[3][3]) + (_m.mat[0][0] * _m.mat[1][1] * _m.mat[3][3]);
-	_m.mat[2][3] = (_m.mat[0][3] * _m.mat[1][1] * _m.mat[2][0]) - (_m.mat[0][1] * _m.mat[1][3] * _m.mat[2][0]) - (_m.mat[0][3] * _m.mat[1][0] * _m.mat[2][1]) + (_m.mat[0][0] * _m.mat[1][3] * _m.mat[2][1]) + (_m.mat[0][1] * _m.mat[1][0] * _m.mat[2][3]) - (_m.mat[0][0] * _m.mat[1][1] * _m.mat[2][3]);
-	_m.mat[3][0] = (_m.mat[1][2] * _m.mat[2][1] * _m.mat[3][0]) - (_m.mat[1][1] * _m.mat[2][2] * _m.mat[3][0]) - (_m.mat[1][2] * _m.mat[2][0] * _m.mat[3][1]) + (_m.mat[1][0] * _m.mat[2][2] * _m.mat[3][1]) + (_m.mat[1][1] * _m.mat[2][0] * _m.mat[3][2]) - (_m.mat[1][0] * _m.mat[2][1] * _m.mat[3][2]);
-	_m.mat[3][1] = (_m.mat[0][1] * _m.mat[2][2] * _m.mat[3][0]) - (_m.mat[0][2] * _m.mat[2][1] * _m.mat[3][0]) + (_m.mat[0][2] * _m.mat[2][0] * _m.mat[3][1]) - (_m.mat[0][0] * _m.mat[2][2] * _m.mat[3][1]) - (_m.mat[0][1] * _m.mat[2][0] * _m.mat[3][2]) + (_m.mat[0][0] * _m.mat[2][1] * _m.mat[3][2]);
-	_m.mat[3][2] = (_m.mat[0][2] * _m.mat[1][1] * _m.mat[3][0]) - (_m.mat[0][1] * _m.mat[1][2] * _m.mat[3][0]) - (_m.mat[0][2] * _m.mat[1][0] * _m.mat[3][1]) + (_m.mat[0][0] * _m.mat[1][2] * _m.mat[3][1]) + (_m.mat[0][1] * _m.mat[1][0] * _m.mat[3][2]) - (_m.mat[0][0] * _m.mat[1][1] * _m.mat[3][2]);
-	_m.mat[3][3] = (_m.mat[0][1] * _m.mat[1][2] * _m.mat[2][0]) - (_m.mat[0][2] * _m.mat[1][1] * _m.mat[2][0]) + (_m.mat[0][2] * _m.mat[1][0] * _m.mat[2][1]) - (_m.mat[0][0] * _m.mat[1][2] * _m.mat[2][1]) - (_m.mat[0][1] * _m.mat[1][0] * _m.mat[2][2]) + (_m.mat[0][0] * _m.mat[1][1] * _m.mat[2][2]);
+	temp.mat[1][0] = (-_m.mat[1][0] * c5 + _m.mat[1][2] * c2 - _m.mat[1][3] * c1) * invdet;
+	temp.mat[1][1] = (_m.mat[0][0] * c5 - _m.mat[0][2] * c2 + _m.mat[0][3] * c1) * invdet;
+	temp.mat[1][2] = (-_m.mat[3][0] * s5 + _m.mat[3][2] * s2 - _m.mat[3][3] * s1) * invdet;
+	temp.mat[1][3] = (_m.mat[2][0] * s5 - _m.mat[2][2] * s2 + _m.mat[2][3] * s1) * invdet;
 
-	float detRatio = 1.0f / determinant;
+	temp.mat[2][0] = (_m.mat[1][0] * c4 - _m.mat[1][1] * c2 + _m.mat[1][3] * c0) * invdet;
+	temp.mat[2][1] = (-_m.mat[0][0] * c4 + _m.mat[0][1] * c2 - _m.mat[0][3] * c0) * invdet;
+	temp.mat[2][2] = (_m.mat[3][0] * s4 - _m.mat[3][1] * s2 + _m.mat[3][3] * s0) * invdet;
+	temp.mat[2][3] = (-_m.mat[2][0] * s4 + _m.mat[2][1] * s2 - _m.mat[2][3] * s0) * invdet;
 
-	_m.mat[0][0] *= detRatio;
-	_m.mat[0][1] *= detRatio;
-	_m.mat[0][2] *= detRatio;
-	_m.mat[0][3] *= detRatio;
-	_m.mat[1][0] *= detRatio;
-	_m.mat[1][1] *= detRatio;
-	_m.mat[1][2] *= detRatio;
-	_m.mat[1][3] *= detRatio;
-	_m.mat[2][0] *= detRatio;
-	_m.mat[2][1] *= detRatio;
-	_m.mat[2][2] *= detRatio;
-	_m.mat[2][3] *= detRatio;
-	_m.mat[3][0] *= detRatio;
-	_m.mat[3][1] *= detRatio;
-	_m.mat[3][2] *= detRatio;
-	_m.mat[3][3] *= detRatio;
+	temp.mat[3][0] = (-_m.mat[1][0] * c3 + _m.mat[1][1] * c1 - _m.mat[1][2] * c0) * invdet;
+	temp.mat[3][1] = (_m.mat[0][0] * c3 - _m.mat[0][1] * c1 + _m.mat[0][2] * c0) * invdet;
+	temp.mat[3][2] = (-_m.mat[3][0] * s3 + _m.mat[3][1] * s1 - _m.mat[3][2] * s0) * invdet;
+	temp.mat[3][3] = (_m.mat[2][0] * s3 - _m.mat[2][1] * s1 + _m.mat[2][2] * s0) * invdet;
 
-	return _m;
+	return temp;
 }
 
 MATRIX_4D Perspective_Projection_4D(float _fov, float _np, float _fp, float _ar)
 {
 	MATRIX_4D temp = Matrix_Identity_4D();
 
-	float yScale = 1.0f / tanf(Degrees_To_Radians(.5 * 90));
+	float yScale = 1.0f / tanf(Degrees_To_Radians(.5 * _fov));
 	temp.e11 = yScale * _ar;
 	temp.e22 = yScale;
 	temp.e33 = _fp / (_fp - _np);

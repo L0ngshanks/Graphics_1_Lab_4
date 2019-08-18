@@ -18,6 +18,19 @@ int main(int argc, char** argv)
 		{ {-.25, .25, -.25, 1}, 0xFFFFFFFF}
 	};
 
+	VERTEX_4D satalite[8]
+	{
+		{ {-.05, -.05, .05, 1}, 0xFFFFFFFF},
+		{ {.05, -.05, .05, 1}, 0xFFFFFFFF},
+		{ {.05, .05, .05, 1}, 0xFFFFFFFF},
+		{ {-.05, .05, .05, 1}, 0xFFFFFFFF},
+
+		{ {-.05, -.05, -.05, 1}, 0xFFFFFFFF},
+		{ {.05, -.05, -.05, 1}, 0xFFFFFFFF},
+		{ {.05, .05, -.05, 1}, 0xFFFFFFFF},
+		{ {-.05, .05, -.05, 1}, 0xFFFFFFFF}
+	};
+
 	VERTEX_4D grid[40]
 	{
 		//Outline
@@ -77,11 +90,20 @@ int main(int argc, char** argv)
 
 	double startTime = GetTickCount64();
 	float degree = 0;
+	float degreeIncrement = 0.075f;
+
+	float fov = 90.0f;
+	float fovMax = 115.0f;
+	float fovMin = 90.0f;
+	float fovIncrement = 0.05f;
+	bool forward = true;
 
 	VEC_4D translation = { 0, .25, 0, 0 };
+	VEC_4D sataliteTranslation = { .5, 0, 0, 0 };
 	VEC_4D view_Translation = { 0, 0, -1, 1 };
 
 	MATRIX_4D cubeMatrix = Matrix_Identity_4D();
+	MATRIX_4D sataliteMatrix = MATRIX_4D();
 	MATRIX_4D gridMatrix = Matrix_Identity_4D();
 
 	while (RS_Update(Raster, NUM_PIXELS))
@@ -91,15 +113,28 @@ int main(int argc, char** argv)
 			startTime = 0;
 			if (degree > 360)
 				degree = 0.0f;
-			degree += .1f;
+			degree += degreeIncrement;
+		}
+
+		if (!forward && fov > fovMin)
+		{
+			fov -= .015f;
+			if (fov <= fovMin)
+				forward = true;
+		}
+		if (forward && fov < fovMax)
+		{
+			fov += .015f;
+			if (fov >= fovMax)
+				forward = false;
 		}
 
 		ClearScreen();
 
 		SV_View = Matrix_to_Matrix_Multiply_4D(Translate(view_Translation), Matrix_Rotation_4D_X(-18));
-		SV_View = Fast_Inverse(SV_View);
-
-		SV_Perspective = Perspective_Projection_4D(90, .1, 10, (RASTER_WIDTH / RASTER_HEIGHT));
+		//SV_View = Fast_Inverse(SV_View);
+		SV_View = Inverse_Matrix_4D(SV_View);
+		SV_Perspective = Perspective_Projection_4D(fov, .1, 10, (RASTER_WIDTH / RASTER_HEIGHT));
 
 		//Cube
 		VertexShader = VS_World;
@@ -124,6 +159,33 @@ int main(int argc, char** argv)
 		Parametric(square[1], square[5]);
 		Parametric(square[2], square[6]);
 		Parametric(square[3], square[7]);
+
+		//Cube Satalite
+		VertexShader = VS_World;
+
+		sataliteMatrix = Matrix_to_Matrix_Multiply_4D(Translate(sataliteTranslation), Matrix_Rotation_4D_X(degree));
+		sataliteMatrix = Matrix_to_Matrix_Multiply_4D(sataliteMatrix, cubeMatrix);
+
+		SV_WorldMatrix = sataliteMatrix;
+
+		PixelShader = PS_ChangeColor;
+		SP_Color = Cyan;
+
+		Parametric(satalite[0], satalite[1]);
+		Parametric(satalite[1], satalite[2]);
+		Parametric(satalite[2], satalite[3]);
+		Parametric(satalite[3], satalite[0]);
+
+		Parametric(satalite[4], satalite[5]);
+		Parametric(satalite[5], satalite[6]);
+		Parametric(satalite[6], satalite[7]);
+		Parametric(satalite[7], satalite[4]);
+
+		Parametric(satalite[0], satalite[4]);
+		Parametric(satalite[1], satalite[5]);
+		Parametric(satalite[2], satalite[6]);
+		Parametric(satalite[3], satalite[7]);
+
 
 		//Grid
 		VertexShader = VS_World;
