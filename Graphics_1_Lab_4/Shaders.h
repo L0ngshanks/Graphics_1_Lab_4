@@ -3,6 +3,10 @@
 
 MATRIX_4D SV_WorldMatrix = Matrix_Identity_4D();
 
+MATRIX_4D SV_View = Matrix_Identity_4D();
+
+MATRIX_4D SV_Perspective = Matrix_Identity_4D();
+
 unsigned int SP_Color = 0x00000000;
 
 //Vertex Shader
@@ -15,8 +19,13 @@ void(*PixelShader)(unsigned int&) = nullptr;
 void VS_World(VERTEX_4D& _v)
 {
 	_v = Vertex_Matrix_Multipication_4D(_v, SV_WorldMatrix);
-}
+	_v = Vertex_Matrix_Multipication_4D(_v, SV_View);
+	_v = Vertex_Matrix_Multipication_4D(_v, SV_Perspective);
 
+	_v.pos.x /= _v.pos.w;
+	_v.pos.y /= _v.pos.w;
+	_v.pos.z /= _v.pos.w;
+}
 
 // PS_Shaders
 

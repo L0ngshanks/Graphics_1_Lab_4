@@ -241,6 +241,25 @@ VERTEX_3D Vertex_Matrix_Multipication_3D(VERTEX_3D _v, MATRIX_3D _m)
 	return temp;
 }
 
+VEC_3D Vertex_Negate_3D(VEC_3D _v)
+{
+	_v.x *= -1;
+	_v.y *= -1;
+	_v.z *= -1;
+
+	return _v;
+}
+
+MATRIX_4D Translate(VEC_4D _v)
+{
+	MATRIX_4D temp = Matrix_Identity_4D();
+
+	temp.e41 = _v.x;
+	temp.e42 = _v.y;
+	temp.e43 = _v.z;
+
+	return temp;
+};
 
 MATRIX_4D Matrix_Rotation_4D_X(float _degree)
 {
@@ -252,6 +271,7 @@ MATRIX_4D Matrix_Rotation_4D_X(float _degree)
 	_m.e23 = -1 * sinf(theta);
 	_m.e32 = sinf(theta);
 	_m.e33 = cosf(theta);
+	_m.e44 = 1;
 	return _m;
 }
 
@@ -265,6 +285,7 @@ MATRIX_4D Matrix_Rotation_4D_Y(float _degree)
 	_m.e22 = 1;
 	_m.e31 = -1 * sin(theta);
 	_m.e33 = cos(theta);
+	_m.e44 = 1;
 
 	return _m;
 }
@@ -282,7 +303,6 @@ MATRIX_3D Matrix_Rotation_3D_Z(float _degree)
 	return _m;
 }
 
-
 MATRIX_4D Matrix_Rotation_4D_Z(float _degree)
 {
 	float theta = Degrees_To_Radians(_degree);
@@ -293,6 +313,7 @@ MATRIX_4D Matrix_Rotation_4D_Z(float _degree)
 	_m.e21 = sin(theta);
 	_m.e22 = cos(theta);
 	_m.e33 = 1;
+	_m.e44 = 1;
 
 	return _m;
 }
@@ -343,15 +364,6 @@ MATRIX_3D Matrix_Transpose_3D(MATRIX_3D _m)
 	_m.e33 = temp.e33;
 
 	return _m;
-}
-
-VEC_3D Vertex_Negate_3D(VEC_3D _v)
-{
-	_v.x *= -1;
-	_v.y *= -1;
-	_v.z *= -1;
-
-	return _v;
 }
 
 MATRIX_4D Fast_Inverse(MATRIX_4D _m)
@@ -454,4 +466,19 @@ MATRIX_4D Inverse_Matrix_4D(MATRIX_4D _m)
 	_m.mat[3][3] *= detRatio;
 
 	return _m;
+}
+
+MATRIX_4D Perspective_Projection_4D(float _fov, float _np, float _fp, float _ar)
+{
+	MATRIX_4D temp = Matrix_Identity_4D();
+
+	float yScale = 1.0f / tanf(Degrees_To_Radians(.5 * 90));
+	temp.e11 = yScale * _ar;
+	temp.e22 = yScale;
+	temp.e33 = _fp / (_fp - _np);
+	temp.e34 = 1;
+	temp.e43 = -(_fp * _np) / (_fp - _np);
+	temp.e44 = 0;
+
+	return temp;
 }

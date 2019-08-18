@@ -21,62 +21,68 @@ int main(int argc, char** argv)
 	VERTEX_4D grid[40]
 	{
 		//Outline
-		{{-.5, 0, -.5, 0}, 0xFFFFFFFF},
-		{{.5, 0, -.5, 0}, 0xFFFFFFFF},
-		{{.5, 0, .5, 0}, 0xFFFFFFFF},
-		{{-.5, 0, .5, 0}, 0xFFFFFFFF},
+		{{-.5, 0, -.5, 1}, 0xFFFFFFFF},
+		{{.5, 0, -.5, 1}, 0xFFFFFFFF},
+		{{.5, 0, .5, 1}, 0xFFFFFFFF},
+		{{-.5, 0, .5, 1}, 0xFFFFFFFF},
 
 		//Rows - Negative
-		{{-.5, 0, -.1, 0}, 0xFFFFFFFF},
-		{{.5, 0, -.1, 0}, 0xFFFFFFFF},
-		{ {-.5, 0, -.2, 0}, 0xFFFFFFFF},
-		{{.5, 0, -.2, 0}, 0xFFFFFFFF},
-		{ {-.5, 0, -.3, 0}, 0xFFFFFFFF},
-		{{.5, 0, -.3, 0}, 0xFFFFFFFF},
-		{ {-.5, 0,-.4, 0}, 0xFFFFFFFF},
-		{{.5, 0, -.4, 0}, 0xFFFFFFFF},
+		{{-.5, 0, -.1, 1}, 0xFFFFFFFF},
+		{{.5, 0, -.1, 1}, 0xFFFFFFFF},
+		{ {-.5, 0, -.2, 1}, 0xFFFFFFFF},
+		{{.5, 0, -.2, 1}, 0xFFFFFFFF},
+		{ {-.5, 0, -.3, 1}, 0xFFFFFFFF},
+		{{.5, 0, -.3, 1}, 0xFFFFFFFF},
+		{ {-.5, 0,-.4, 1}, 0xFFFFFFFF},
+		{{.5, 0, -.4, 1}, 0xFFFFFFFF},
 
 		//Rows - Positive
-		{{-.5, 0, .1, 0}, 0xFFFFFFFF},
-		{{.5, 0, .1, 0}, 0xFFFFFFFF},
-		{ {-.5, 0, .2, 0}, 0xFFFFFFFF},
-		{{.5, 0, .2, 0}, 0xFFFFFFFF},
-		{ {-.5, 0, .3, 0}, 0xFFFFFFFF},
-		{{.5, 0, .3, 0}, 0xFFFFFFFF},
-		{ {-.5, 0, .4, 0}, 0xFFFFFFFF},
-		{{.5, 0, .4, 0}, 0xFFFFFFFF},
+		{{-.5, 0, .1, 1}, 0xFFFFFFFF},
+		{{.5, 0, .1, 1}, 0xFFFFFFFF},
+		{ {-.5, 0, .2, 1}, 0xFFFFFFFF},
+		{{.5, 0, .2, 1}, 0xFFFFFFFF},
+		{ {-.5, 0, .3, 1}, 0xFFFFFFFF},
+		{{.5, 0, .3, 1}, 0xFFFFFFFF},
+		{ {-.5, 0, .4, 1}, 0xFFFFFFFF},
+		{{.5, 0, .4, 1}, 0xFFFFFFFF},
 
 		//Center - Row
-		{{-.5, 0.0, 0, 0}, 0xFFFFFFFF},
-		{{.5, 0.0, 0, 0}, 0xFFFFFFFF},
+		{{-.5, 0.0, 0, 1}, 0xFFFFFFFF},
+		{{.5, 0.0, 0, 1}, 0xFFFFFFFF},
 		//Center Collumn
-		{{0, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {0, 0, .5, 0}, 0xFFFFFFFF},
+		{{0, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {0, 0, .5, 1}, 0xFFFFFFFF},
 
 		//Collumns Negative
-		{ {-.1, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {-.1, 0, .5, 0}, 0xFFFFFFFF},
-		{ {-.2, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {-.2, 0, .5, 0}, 0xFFFFFFFF},
-		{ {-.3, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {-.3, 0, .5, 0}, 0xFFFFFFFF},
-		{ {-.4, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {-.4, 0, .5, 0}, 0xFFFFFFFF},
+		{ {-.1, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {-.1, 0, .5, 1}, 0xFFFFFFFF},
+		{ {-.2, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {-.2, 0, .5, 1}, 0xFFFFFFFF},
+		{ {-.3, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {-.3, 0, .5, 1}, 0xFFFFFFFF},
+		{ {-.4, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {-.4, 0, .5, 1}, 0xFFFFFFFF},
 
 		//Collumns Positive
-		{ {.1, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {.1, 0, .5, 0}, 0xFFFFFFFF},
-		{ {.2, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {.2, 0, .5, 0}, 0xFFFFFFFF},
-		{ {.3, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {.3, 0, .5, 0}, 0xFFFFFFFF},
-		{ {.4, 0, -.5, 0}, 0xFFFFFFFF},
-		{ {.4, 0, .5, 0}, 0xFFFFFFFF}
+		{ {.1, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {.1, 0, .5, 1}, 0xFFFFFFFF},
+		{ {.2, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {.2, 0, .5, 1}, 0xFFFFFFFF},
+		{ {.3, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {.3, 0, .5, 1}, 0xFFFFFFFF},
+		{ {.4, 0, -.5, 1}, 0xFFFFFFFF},
+		{ {.4, 0, .5, 1}, 0xFFFFFFFF}
 
 	};
 
 	double startTime = GetTickCount64();
 	float degree = 0;
+
+	VEC_4D translation = { 0, .25, 0, 0 };
+	VEC_4D view_Translation = { 0, 0, -1, 1 };
+
+	MATRIX_4D cubeMatrix = Matrix_Identity_4D();
+	MATRIX_4D gridMatrix = Matrix_Identity_4D();
 
 	while (RS_Update(Raster, NUM_PIXELS))
 	{
@@ -90,7 +96,38 @@ int main(int argc, char** argv)
 
 		ClearScreen();
 
-		VertexShader = nullptr;
+		SV_View = Matrix_to_Matrix_Multiply_4D(Translate(view_Translation), Matrix_Rotation_4D_X(-18));
+		SV_View = Fast_Inverse(SV_View);
+
+		SV_Perspective = Perspective_Projection_4D(90, .1, 10, (RASTER_WIDTH / RASTER_HEIGHT));
+
+		//Cube
+		VertexShader = VS_World;
+		cubeMatrix = Matrix_to_Matrix_Multiply_4D(Translate(translation), Matrix_Rotation_4D_Y(degree));
+
+		SV_WorldMatrix = cubeMatrix;
+
+		PixelShader = PS_ChangeColor;
+		SP_Color = Green;
+
+		Parametric(square[0], square[1]);
+		Parametric(square[1], square[2]);
+		Parametric(square[2], square[3]);
+		Parametric(square[3], square[0]);
+
+		Parametric(square[4], square[5]);
+		Parametric(square[5], square[6]);
+		Parametric(square[6], square[7]);
+		Parametric(square[7], square[4]);
+
+		Parametric(square[0], square[4]);
+		Parametric(square[1], square[5]);
+		Parametric(square[2], square[6]);
+		Parametric(square[3], square[7]);
+
+		//Grid
+		VertexShader = VS_World;
+		SV_WorldMatrix = gridMatrix;
 
 		PixelShader = PS_ChangeColor;
 		SP_Color = White;
@@ -128,30 +165,6 @@ int main(int argc, char** argv)
 		Parametric(grid[34], grid[35]);
 		Parametric(grid[36], grid[37]);
 		Parametric(grid[38], grid[39]);
-
-		VertexShader = VS_World;
-		SV_WorldMatrix = Matrix_Rotation_4D_Y(degree);
-
-		PixelShader = PS_ChangeColor;
-		SP_Color = Green;
-
-		Parametric(square[0], square[1]);
-		Parametric(square[1], square[2]);
-		Parametric(square[2], square[3]);
-		Parametric(square[3], square[0]);
-
-		Parametric(square[4], square[5]);
-		Parametric(square[5], square[6]);
-		Parametric(square[6], square[7]);
-		Parametric(square[7], square[4]);
-
-		Parametric(square[0], square[4]);
-		Parametric(square[1], square[5]);
-		Parametric(square[2], square[6]);
-		Parametric(square[3], square[7]);
-
-
-
 
 	};
 

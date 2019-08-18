@@ -31,6 +31,8 @@ const int WholeMask = -1 ^ FractionMask;
 #define NDC_to_Screen_X(ndcX) (((ndcX) + 1.0f) * ((RASTER_WIDTH) >> 1))
 #define NDC_to_Screen_Y(ndcY) ((1.0f - (ndcY)) * ((RASTER_HEIGHT) >> 1))
 
+#define AspectRatio (((float)RASTER_WIDTH) / (RASTER_HEIGHT))
+
 #define Red 0xFFFF0000
 #define Green 0xFF00FF00
 #define Blue 0xFF0000FF
